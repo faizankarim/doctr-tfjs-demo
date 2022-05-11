@@ -5,8 +5,8 @@
 
 import { Grid, makeStyles, Theme } from "@material-ui/core";
 import { COLORS } from "@mindee/web-elements.assets";
-import { BrowserView, MobileView } from "react-device-detect";
-import MobileViewPage from "./components/MobileView";
+// import { BrowserView, MobileView } from "react-device-detect";
+// import MobileViewPage from "./components/MobileView";
 import PageFooter from "./components/PageFooter";
 import PageHeader from "./components/PageHeader";
 import VisionWrapper from "./components/VisionWrapper";
@@ -30,7 +30,7 @@ function App() {
   const classes = useStyles();
   return (
     <>
-      <BrowserView>
+      {/*<BrowserView>*/}
         <Grid className={classes.wrapper} container>
           <Grid item xs={12}>
             <PageHeader />
@@ -47,10 +47,10 @@ function App() {
             </Grid>
           </Grid>
         </Grid>
-      </BrowserView>
-      <MobileView>
-        <MobileViewPage />
-      </MobileView>
+      {/*</BrowserView>*/}
+      {/*<MobileView>*/}
+      {/*  <MobileViewPage />*/}
+      {/*</MobileView>*/}
     </>
   );
 }
