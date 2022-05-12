@@ -33,17 +33,17 @@ function App() {
       {/*<BrowserView>*/}
         <Grid className={classes.wrapper} container>
           <Grid item xs={12}>
-            <PageHeader />
+            {/*<PageHeader />*/}
           </Grid>
           <Grid spacing={1} className={classes.content} item container xs={12}>
             <Grid item xs={12}>
-              <WelcomeMessage />
+              {/*<WelcomeMessage />*/}
             </Grid>
             <Grid item xs={12}>
               <VisionWrapper />
             </Grid>
             <Grid item xs={12}>
-              <PageFooter />
+              {/*<PageFooter />*/}
             </Grid>
           </Grid>
         </Grid>

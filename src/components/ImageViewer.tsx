@@ -40,6 +40,8 @@ export default function ImageViewer({
   const classes = useStyles();
   return (
     <Box className={classes.wrapper}>
+
+        {/*<video id="video" className={classes.image} autoPlay playsInline />*/}
       <Typography
         style={{ fontFamily: FONTS.bold, marginBottom: 20 }}
         paragraph

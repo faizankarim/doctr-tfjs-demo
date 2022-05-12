@@ -13,21 +13,16 @@ import {
   scalar,
   softmax,
   squeeze,
+  tidy,
   unstack,
 } from "@tensorflow/tfjs";
-import { Layer } from "konva/lib/Layer";
+import {Layer} from "konva/lib/Layer";
 import randomColor from "randomcolor";
-import { MutableRefObject } from "react";
-import { AnnotationShape, Stage } from "react-mindee-js";
-import {
-  DET_MEAN,
-  DET_STD,
-  REC_MEAN,
-  REC_STD,
-  VOCAB,
-} from "src/common/constants";
-import { ModelConfig } from "src/common/types";
-import { chunk } from "underscore";
+import {MutableRefObject} from "react";
+import {AnnotationShape, Stage} from "react-mindee-js";
+import {DET_MEAN, DET_STD, REC_MEAN, REC_STD, VOCAB,} from "src/common/constants";
+import {ModelConfig} from "src/common/types";
+import {chunk} from "underscore";
 
 export const loadRecognitionModel = async ({
   recognitionModel,
@@ -82,12 +77,15 @@ export const getImageTensorForRecognitionModel = (
         [0, 0],
       ];
     }
-    return browser
-      .fromPixels(imageObject)
-      .resizeNearestNeighbor(resize_target)
-      .pad(padding_target, 0)
-      .toFloat()
-      .expandDims();
+    return tidy(() => {
+      return browser
+          .fromPixels(imageObject)
+          .resizeNearestNeighbor(resize_target)
+          .pad(padding_target, 0)
+          .toFloat()
+          .expandDims();
+
+    });
   });
   const tensor = concat(list);
   let mean = scalar(255 * REC_MEAN);
@@ -99,10 +97,13 @@ export const getImageTensorForDetectionModel = (
   imageObject: HTMLImageElement,
   size: [number, number]
 ) => {
-  let tensor = browser
-    .fromPixels(imageObject)
-    .resizeNearestNeighbor(size)
-    .toFloat();
+  let tensor = tidy(() => {
+    return browser
+        .fromPixels(imageObject)
+        .resizeNearestNeighbor(size)
+        .toFloat();
+
+  });
   let mean = scalar(255 * DET_MEAN);
   let std = scalar(255 * DET_STD);
   return tensor.sub(mean).div(std).expandDims();
