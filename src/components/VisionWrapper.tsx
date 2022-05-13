@@ -145,6 +145,10 @@ export default function VisionWrapper(): JSX.Element {
     //     </Webcam>
     // );
 
+    function delay() {
+        return new Promise(resolve => setTimeout(resolve, 1000));
+    }
+
     // get usermedia stream and set it to the image object and set setExtractingWords to true and get the bounding boxes and words
     const getUserMedia = async() => {
         setExtractingWords(true);
@@ -175,6 +179,7 @@ export default function VisionWrapper(): JSX.Element {
                 setLoadingImage(false);
             };
         });
+        delay().then(() => console.log('ran after 1 second1 passed'));
         getUserMedia();
     };
 
