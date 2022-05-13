@@ -61,7 +61,7 @@ export default function VisionWrapper(): JSX.Element {
 
     const onUpload = (newFile: UploadedFile) => {
         clearCurrentStates();
-        loadImage(newFile);
+        // loadImage(newFile);
         setAnnotationData({image: newFile.image});
     };
 
@@ -119,85 +119,99 @@ export default function VisionWrapper(): JSX.Element {
         setExtractingWords(false);
     };
 
-    // const videoConstraints = {
-    //     width: 1280,
-    //     height: 720,
-    //     facingMode: "user"
-    // };
+    const videoConstraints = {
+        width: 512,
+        height: 512,
+        facingMode: "environment"
+    };
+
+    const WebcamCapture = () => (
+        <Webcam
+            audio={false}
+            height={512}
+            screenshotFormat="image/jpeg"
+            width={512}
+            videoConstraints={videoConstraints}
+        >
+            {({ getScreenshot }) => (
+                <button
+                    onClick={() => {
+                        const imageSrc = getScreenshot();
+                        if (typeof imageSrc === "string") {
+                            imageObject.current.src = imageSrc;
+                            imageObject.current.onload = async () => {
+                                await getHeatMapFromImage({
+                                    heatmapContainer: heatMapContainerObject.current,
+                                    detectionModel: detectionModel.current,
+                                    imageObject: imageObject.current,
+                                    size: [detConfig.height, detConfig.width],
+                                });
+                                getBoundingBoxes();
+                                setLoadingImage(false);
+                            };
+
+                        }
+                    }}
+                >
+                    Capture photo
+                </button>
+            )}
+        </Webcam>
+    );
+
+    // function delay() {
+    //     return new Promise(resolve => setTimeout(resolve, 1000));
+    // }
     //
-    // const WebcamCapture = () => (
-    //     <Webcam
-    //         audio={false}
-    //         height={720}
-    //         screenshotFormat="image/jpeg"
-    //         width={1280}
-    //         videoConstraints={videoConstraints}
-    //     >
-    //         {({ getScreenshot }) => (
-    //             <button
-    //                 onClick={() => {
-    //                     const imageSrc = getScreenshot();
-    //                 }}
-    //             >
-    //                 Capture photo
-    //             </button>
-    //         )}
-    //     </Webcam>
-    // );
+    // // get usermedia stream and set it to the image object and set setExtractingWords to true and get the bounding boxes and words
+    // const getUserMedia = async() => {
+    //     setExtractingWords(true);
+    //     const video = document.createElement("video");
+    //     const canvas = document.createElement("canvas");
+    //     const context = canvas.getContext("2d");
+    //     const stream = navigator.mediaDevices.getUserMedia({
+    //         audio: false,
+    //         video: {
+    //             facingMode: "environment",
+    //         },
+    //     });
+    //     video.srcObject = await stream;
+    //     video.play();
+    //     video.addEventListener("loadedmetadata", () => {
+    //         canvas.width = video.videoWidth;
+    //         canvas.height = video.videoHeight;
+    //         context?.drawImage(video, 0, 0, canvas.width, canvas.height);
+    //         imageObject.current.src = canvas.toDataURL("image/png");
+    //         imageObject.current.onload = async () => {
+    //             await getHeatMapFromImage({
+    //                 heatmapContainer: heatMapContainerObject.current,
+    //                 detectionModel: detectionModel.current,
+    //                 imageObject: imageObject.current,
+    //                 size: [detConfig.height, detConfig.width],
+    //             });
+    //             getBoundingBoxes();
+    //             setLoadingImage(false);
+    //         };
+    //     });
+    //     delay().then(() => console.log('ran after 1 second1 passed'));
+    //     getUserMedia();
+    // };
 
-    function delay() {
-        return new Promise(resolve => setTimeout(resolve, 1000));
-    }
-
-    // get usermedia stream and set it to the image object and set setExtractingWords to true and get the bounding boxes and words
-    const getUserMedia = async() => {
-        setExtractingWords(true);
-        const video = document.createElement("video");
-        const canvas = document.createElement("canvas");
-        const context = canvas.getContext("2d");
-        const stream = navigator.mediaDevices.getUserMedia({
-            audio: false,
-            video: {
-                facingMode: "environment",
-            },
-        });
-        video.srcObject = await stream;
-        video.play();
-        video.addEventListener("loadedmetadata", () => {
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            context?.drawImage(video, 0, 0, canvas.width, canvas.height);
-            imageObject.current.src = canvas.toDataURL("image/png");
-            imageObject.current.onload = async () => {
-                await getHeatMapFromImage({
-                    heatmapContainer: heatMapContainerObject.current,
-                    detectionModel: detectionModel.current,
-                    imageObject: imageObject.current,
-                    size: [detConfig.height, detConfig.width],
-                });
-                getBoundingBoxes();
-                setLoadingImage(false);
-            };
-        });
-        delay().then(() => console.log('ran after 1 second1 passed'));
-        getUserMedia();
-    };
-
-    const loadImage = async (uploadedFile: UploadedFile) => {
-        setLoadingImage(true);
-        setExtractingWords(true);
-        imageObject.current.onload = async () => {
-            await getHeatMapFromImage({
-                heatmapContainer: heatMapContainerObject.current,
-                detectionModel: detectionModel.current,
-                imageObject: imageObject.current,
-                size: [detConfig.height, detConfig.width],
-            });
-            getBoundingBoxes();
-            setLoadingImage(false);
-        };
-        imageObject.current.src = uploadedFile?.image as string;
-    };
+    // const loadImage = async (uploadedFile: UploadedFile) => {
+    //     setLoadingImage(true);
+    //     setExtractingWords(true);
+    //     imageObject.current.onload = async () => {
+    //         await getHeatMapFromImage({
+    //             heatmapContainer: heatMapContainerObject.current,
+    //             detectionModel: detectionModel.current,
+    //             imageObject: imageObject.current,
+    //             size: [detConfig.height, detConfig.width],
+    //         });
+    //         getBoundingBoxes();
+    //         setLoadingImage(false);
+    //     };
+    //     imageObject.current.src = uploadedFile?.image as string;
+    // };
     const setAnnotationStage = (stage: Stage) => {
         annotationStage.current = stage;
     };
@@ -255,11 +269,11 @@ export default function VisionWrapper(): JSX.Element {
             id={COMPONENT_ID}
             container
         >
-            <Portal container={uploadContainer}>
-                <ImageViewer loadingImage={loadingImage} onClick={getUserMedia}/>
+            {/*<Portal container={uploadContainer}>*/}
+            {/*    /!*<ImageViewer loadingImage={loadingImage} onClick={getUserMedia}/>*!/*/}
 
-            </Portal>
-            <Webcam/>
+            {/*</Portal>*/}
+
             {/*<button/>*/}
             <HeatMap heatMapContainerRef={heatMapContainerObject}/>
             <Grid item xs={12} md={3}>
@@ -270,6 +284,7 @@ export default function VisionWrapper(): JSX.Element {
                     setRecoConfig={setRecoConfig}
                 />
             </Grid>
+            <WebcamCapture/>
             <Grid xs={12} item md={5}>
                 <AnnotationViewer
                     loadingImage={loadingImage}

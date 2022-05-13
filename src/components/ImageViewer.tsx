@@ -41,9 +41,9 @@ export default function ImageViewer({
   return (
     <Box className={classes.wrapper}>
 
-      <button onClick={onClick}>
-          predict
-      </button>
+      {/*<button onClick={onClick}>*/}
+      {/*    predict*/}
+      {/*</button>*/}
     </Box>
   );
 }
