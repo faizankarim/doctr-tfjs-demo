@@ -158,7 +158,7 @@ export default function VisionWrapper(): JSX.Element {
         const stream = navigator.mediaDevices.getUserMedia({
             audio: false,
             video: {
-                facingMode: "user",
+                facingMode: "environment",
             },
         });
         video.srcObject = await stream;
