@@ -7,10 +7,10 @@ import { Grid, makeStyles, Theme } from "@material-ui/core";
 import { COLORS } from "@mindee/web-elements.assets";
 // import { BrowserView, MobileView } from "react-device-detect";
 // import MobileViewPage from "./components/MobileView";
-import PageFooter from "./components/PageFooter";
-import PageHeader from "./components/PageHeader";
+// import PageFooter from "./components/PageFooter";
+// import PageHeader from "./components/PageHeader";
 import VisionWrapper from "./components/VisionWrapper";
-import WelcomeMessage from "./components/WelcomeMessage";
+// import WelcomeMessage from "./components/WelcomeMessage";
 
 const useStyles = makeStyles((theme: Theme) => ({
   wrapper: {

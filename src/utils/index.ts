@@ -56,6 +56,8 @@ export const getImageTensorForRecognitionModel = (
   crops: HTMLImageElement[],
   size: [number, number]
 ) => {
+  let mean = scalar(255 * REC_MEAN);
+  let std = scalar(255 * REC_STD);
   const list = crops.map((imageObject) => {
     let h = imageObject.height;
     let w = imageObject.width;
@@ -83,30 +85,35 @@ export const getImageTensorForRecognitionModel = (
           .resizeNearestNeighbor(resize_target)
           .pad(padding_target, 0)
           .toFloat()
+          .sub(mean)
+          .div(std)
           .expandDims();
 
     });
   });
   const tensor = concat(list);
-  let mean = scalar(255 * REC_MEAN);
-  let std = scalar(255 * REC_STD);
-  return tensor.sub(mean).div(std);
+
+  return tensor;
 };
 
 export const getImageTensorForDetectionModel = (
   imageObject: HTMLImageElement,
   size: [number, number]
 ) => {
+  let mean = scalar(255 * DET_MEAN);
+  let std = scalar(255 * DET_STD);
   let tensor = tidy(() => {
     return browser
         .fromPixels(imageObject)
         .resizeNearestNeighbor(size)
-        .toFloat();
+        .toFloat()
+        .sub(mean)
+        .div(std)
+        .expandDims();
 
   });
-  let mean = scalar(255 * DET_MEAN);
-  let std = scalar(255 * DET_STD);
-  return tensor.sub(mean).div(std).expandDims();
+
+  return tensor;
 };
 
 export const extractWords = async ({

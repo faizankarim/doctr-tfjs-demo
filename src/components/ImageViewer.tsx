@@ -30,54 +30,20 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 interface Props {
   loadingImage: boolean;
-  onUpload: (file: UploadedFile) => void;
+  onClick: () => void;
 }
 
 export default function ImageViewer({
-  onUpload,
+                                        onClick,
   loadingImage,
 }: Props): JSX.Element {
   const classes = useStyles();
   return (
     <Box className={classes.wrapper}>
 
-        {/*<video id="video" className={classes.image} autoPlay playsInline />*/}
-      <Typography
-        style={{ fontFamily: FONTS.bold, marginBottom: 20 }}
-        paragraph
-        variant="subtitle1"
-      >
-        2 - Upload an image
-      </Typography>
-      <Uploader
-        style={{ height: "225px", justifyContent: "center" }}
-        onUpload={onUpload}
-      >
-        {loadingImage ? (
-          <Spinner />
-        ) : (
-          <Box
-            border="1px solid #E6E9EC"
-            borderRadius="4px"
-            justifyContent="center"
-            display="flex"
-            width="100%"
-            alignItems="center"
-            flexDirection="column"
-            style={{ rowGap: 10 }}
-          >
-            <img
-              alt="placeholder"
-              src={placeholder}
-              className={classes.placeholder}
-            />
-            <Typography align="center" style={{ fontSize: 15 }} variant="body2">
-              Upload an image <br />
-              (.jpg, .png, .webp)
-            </Typography>
-          </Box>
-        )}
-      </Uploader>
+      <button onClick={onClick}>
+          predict
+      </button>
     </Box>
   );
 }

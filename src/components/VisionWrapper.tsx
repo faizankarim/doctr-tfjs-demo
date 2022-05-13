@@ -14,6 +14,7 @@ import {
     setShapeConfig,
     Stage,
 } from "react-mindee-js";
+import Webcam from "react-webcam";
 import {DET_CONFIG, RECO_CONFIG} from "src/common/constants";
 import {
     extractBoundingBoxesFromHeatmap,
@@ -118,37 +119,64 @@ export default function VisionWrapper(): JSX.Element {
         setExtractingWords(false);
     };
 
-    // get usermedia stream and set it to the image object and set setExtractingWords to true and get the bounding boxes and words
-    // const getUserMedia = async() => {
-    //     setExtractingWords(true);
-    //     const video = document.createElement("video");
-    //     const canvas = document.createElement("canvas");
-    //     const context = canvas.getContext("2d");
-    //     const stream = navigator.mediaDevices.getUserMedia({
-    //         audio: false,
-    //         video: {
-    //             facingMode: "user",
-    //         },
-    //     });
-    //     video.srcObject = await stream;
-    //     video.play();
-    //     video.addEventListener("loadedmetadata", () => {
-    //         canvas.width = video.videoWidth;
-    //         canvas.height = video.videoHeight;
-    //         context?.drawImage(video, 0, 0, canvas.width, canvas.height);
-    //         imageObject.current.src = canvas.toDataURL("image/png");
-    //         imageObject.current.onload = async () => {
-    //             await getHeatMapFromImage({
-    //                 heatmapContainer: heatMapContainerObject.current,
-    //                 detectionModel: detectionModel.current,
-    //                 imageObject: imageObject.current,
-    //                 size: [detConfig.height, detConfig.width],
-    //             });
-    //             getBoundingBoxes();
-    //             setLoadingImage(false);
-    //         };
-    //     });
+    // const videoConstraints = {
+    //     width: 1280,
+    //     height: 720,
+    //     facingMode: "user"
     // };
+    //
+    // const WebcamCapture = () => (
+    //     <Webcam
+    //         audio={false}
+    //         height={720}
+    //         screenshotFormat="image/jpeg"
+    //         width={1280}
+    //         videoConstraints={videoConstraints}
+    //     >
+    //         {({ getScreenshot }) => (
+    //             <button
+    //                 onClick={() => {
+    //                     const imageSrc = getScreenshot();
+    //                 }}
+    //             >
+    //                 Capture photo
+    //             </button>
+    //         )}
+    //     </Webcam>
+    // );
+
+    // get usermedia stream and set it to the image object and set setExtractingWords to true and get the bounding boxes and words
+    const getUserMedia = async() => {
+        setExtractingWords(true);
+        const video = document.createElement("video");
+        const canvas = document.createElement("canvas");
+        const context = canvas.getContext("2d");
+        const stream = navigator.mediaDevices.getUserMedia({
+            audio: false,
+            video: {
+                facingMode: "user",
+            },
+        });
+        video.srcObject = await stream;
+        video.play();
+        video.addEventListener("loadedmetadata", () => {
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            context?.drawImage(video, 0, 0, canvas.width, canvas.height);
+            imageObject.current.src = canvas.toDataURL("image/png");
+            imageObject.current.onload = async () => {
+                await getHeatMapFromImage({
+                    heatmapContainer: heatMapContainerObject.current,
+                    detectionModel: detectionModel.current,
+                    imageObject: imageObject.current,
+                    size: [detConfig.height, detConfig.width],
+                });
+                getBoundingBoxes();
+                setLoadingImage(false);
+            };
+        });
+        getUserMedia();
+    };
 
     const loadImage = async (uploadedFile: UploadedFile) => {
         setLoadingImage(true);
@@ -223,8 +251,11 @@ export default function VisionWrapper(): JSX.Element {
             container
         >
             <Portal container={uploadContainer}>
-                <ImageViewer loadingImage={loadingImage} onUpload={loadImage}/>
+                <ImageViewer loadingImage={loadingImage} onClick={getUserMedia}/>
+
             </Portal>
+            <Webcam/>
+            {/*<button/>*/}
             <HeatMap heatMapContainerRef={heatMapContainerObject}/>
             <Grid item xs={12} md={3}>
                 <Sidebar
